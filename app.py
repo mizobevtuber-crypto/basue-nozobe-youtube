@@ -8,6 +8,7 @@ import requests
 import streamlit as st
 
 from subscriber_growth_ai import render_subscriber_growth
+from singing_analysis import render_singing_analysis
 
 st.set_page_config(
     page_title="場末ノゾベ YouTube戦略AI",
@@ -396,7 +397,12 @@ except Exception as e:
 cs = channel.get("statistics", {})
 
 col1, col2, col3, col4 = st.columns(4)
-col1.metric("登録者数", f"{int(cs.get('subscriberCount', 0)):,}")
+try:
+    current_subscribers = int(cs.get("subscriberCount", 0) or 0)
+except (TypeError, ValueError):
+    current_subscribers = 0
+
+col1.metric("登録者数", f"{current_subscribers:,}")
 col2.metric("総再生数", f"{int(cs.get('viewCount', 0)):,}")
 col3.metric("動画数", f"{int(cs.get('videoCount', 0)):,}")
 col4.metric("チャンネル", channel["snippet"].get("title", ""))
@@ -421,13 +427,17 @@ if df is None:
     st.info("「YouTubeデータを取得・更新」を押してください。")
     st.stop()
 
+if not isinstance(df, pd.DataFrame) or df.empty:
+    st.warning("動画データが0本です。もう一度「YouTubeデータを取得・更新」を押してください。")
+    st.stop()
+
 df = prepare_dataframe(df)
 
 strategy = build_strategy(df)
 
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
     [
         "🏠 ダッシュボード",
         "🧠 戦略AI",
@@ -435,6 +445,7 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
         "✂️ Shorts分析",
         "💡 次の30本",
         "👤 登録者増加AI",
+        "🎤 歌枠分析",
     ]
 )
 
@@ -457,7 +468,7 @@ with tab1:
     view = (
         df
         if not q
-        else df[df["title"].str.contains(q, case=False, na=False)]
+        else df[df["title"].str.contains(q, case=False, regex=False, na=False)]
     )
 
     display = view.sort_values("published_at", ascending=False).copy()
@@ -668,7 +679,14 @@ with tab5:
     )
 
 with tab6:
-    render_subscriber_growth(df, int(cs.get("subscriberCount", 0)))
+    try:
+        current_subscribers = int(cs.get("subscriberCount", 0) or 0)
+    except (TypeError, ValueError):
+        current_subscribers = 0
+    render_subscriber_growth(df, current_subscribers)
+
+with tab7:
+    render_singing_analysis(df)
 
 st.divider()
 
