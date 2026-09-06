@@ -668,7 +668,7 @@ with tab5:
     )
 
 with tab6:
-    render_subscriber_growth(df)
+    render_subscriber_growth(df, int(cs.get("subscriberCount", 0)))
 
 st.divider()
 

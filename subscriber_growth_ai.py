@@ -123,7 +123,7 @@ def make_subscriber_ideas(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
     return out[["順位", "企画案", "狙い", "参考動画"]]
 
 
-def render_subscriber_growth(df: pd.DataFrame):
+def render_subscriber_growth(df: pd.DataFrame, subscribers: int = 0):
     st.header("👤 登録者増加AI")
 
     st.info(
@@ -144,7 +144,7 @@ def render_subscriber_growth(df: pd.DataFrame):
     ).head(10).copy()
 
     c1, c2, c3 = st.columns(3)
-    c1.metric("現在の登録者", f"{int(df.attrs.get('subscribers', 0)):,}")
+    c1.metric("現在の登録者", f"{int(subscribers):,}")
     c2.metric("登録者向け上位動画", f"{len(top):,}本")
     c3.metric("上位動画の中央値再生", f"{top['views'].median():,.0f}")
 
