@@ -427,13 +427,14 @@ strategy = build_strategy(df)
 
 st.divider()
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
     [
         "🏠 ダッシュボード",
         "🧠 戦略AI",
         "🔥 伸びた動画",
         "✂️ Shorts分析",
         "💡 次の30本",
+        "👤 登録者増加AI",
     ]
 )
 
