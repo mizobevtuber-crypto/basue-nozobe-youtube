@@ -7,6 +7,8 @@ import pandas as pd
 import requests
 import streamlit as st
 
+from subscriber_growth_ai import render_subscriber_growth
+
 st.set_page_config(
     page_title="場末ノゾベ YouTube戦略AI",
     page_icon="🧠",
@@ -663,6 +665,9 @@ with tab5:
         mime="text/csv",
         use_container_width=True,
     )
+
+with tab6:
+    render_subscriber_growth(df)
 
 st.divider()
 
